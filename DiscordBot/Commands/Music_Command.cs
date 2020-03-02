@@ -2,17 +2,14 @@
 using Discord.Audio;
 using Discord.Commands;
 using NAudio.Wave;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Speech.Synthesis;
-using System.Speech.AudioFormat;
-using static DiscordBot.Helpers;
+using System.Text.RegularExpressions;
+using System.Globalization;
+using DiscordBot.Helpers;
 
 namespace DiscordBot {
 	public class Music_Command : ModuleBase<SocketCommandContext> {
@@ -27,10 +24,6 @@ namespace DiscordBot {
 		[Command("leave", RunMode = RunMode.Async), Alias("dismiss")]
 		public async Task Leave() => await _vClient.StopAsync();
 
-		[Command("play", RunMode = RunMode.Async)]
-		public async Task Play() {
-			await SendAudioAsync(GetMusic().FirstOrDefault());
-		}
 
 		[Command("stop", RunMode = RunMode.Async)]
 		public async Task Stop() { 
@@ -38,13 +31,9 @@ namespace DiscordBot {
 				_cancelPlayTokenSource.Cancel();
 			}
 		}
-
-		[Command("next", RunMode = RunMode.Async)]
-		public async Task Next() => await Play();
-
 		[Command("youtube", RunMode = RunMode.Async)]
 		public async Task Youtube([Remainder]string url) {
-			var file = await Helpers.Download(url);
+			var file = await Helpers.Youtube.Download(url);
 			await SendAudioAsync(file);
 		}
 
@@ -99,12 +88,9 @@ namespace DiscordBot {
 		}
 
 		private Process CreateStream(string path) {
-			return Process.Start(new ProcessStartInfo {
-				FileName = "ffmpeg.exe",
-				Arguments = $"-hide_banner -loglevel panic -i \"{path}\" -ac 2 -f s16le -ar 48000 pipe:1",
-				UseShellExecute = false,
-				RedirectStandardOutput = true
-			});
+			//float offset = FFmpeg.DetectDbOffset(path);
+			//FFmpeg.AdjustVolume(path, offset);
+			return FFmpeg.GetFFMpegStream(path);
 		}
 	}
 }

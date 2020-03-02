@@ -10,13 +10,14 @@ namespace DiscordBot.Commands {
 
 	public class RequireOwnerAttribute : PreconditionAttribute {
 		// Override the CheckPermissions method
-		public async override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services) {
-			if(context.User.Id == 119125517080330240) {
-				return PreconditionResult.FromSuccess();
+
+		public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services) {
+			if (context.User.Id == 119125517080330240) {
+				return Task.FromResult(PreconditionResult.FromSuccess());
 			} else {
-				await Logger.Log(new Discord.LogMessage(Discord.LogSeverity.Warning, "admin_permission", $"{context.User.Username} ({context.User.Id}) is using the /admin command"));
+				Logger.Log(new Discord.LogMessage(Discord.LogSeverity.Warning, "admin_permission", $"{context.User.Username} ({context.User.Id}) is using the /admin command"));
 			}
-			return PreconditionResult.FromError($"{context.User.Mention} Je hebt geen rechten om dit commando uit te voeren");
+			return Task.FromResult(PreconditionResult.FromError($"{context.User.Mention} Je hebt geen rechten om dit commando uit te voeren"));
 		}
 	}
 

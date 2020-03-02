@@ -32,7 +32,7 @@ namespace DiscordBot {
 
 			_client.Log += Logger.Log;
 
-			string token = "Mzg4MDQ4NDEwOTMyMTUwMjcy.XlwuNg.-aMRRU5Dier0tu32xYxUUveOlqM"; // Remember to keep this private!
+			string token = ""; // Remember to keep this private!
 			await _client.LoginAsync(TokenType.Bot, token);
 			await _client.StartAsync();
 			await _client.SetGameAsync("Playing Fox", "https://discordapp.com/oauth2/authorize?&client_id=388048410932150272&scope=bot&permissions=1878523073");
@@ -62,7 +62,8 @@ namespace DiscordBot {
 
 			// Either search the program and add all Module classes that can be found.
 			// Module classes MUST be marked 'public' or they will be ignored.
-			await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
+			await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), null);
+
 			_client.MessageReceived += HandleCommandAsync;
 		}
 
