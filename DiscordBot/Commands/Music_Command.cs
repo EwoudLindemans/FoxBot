@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Speech.Synthesis;
 using System.Speech.AudioFormat;
+using static DiscordBot.Helpers;
 
 namespace DiscordBot {
 	public class Music_Command : ModuleBase<SocketCommandContext> {
@@ -21,7 +22,7 @@ namespace DiscordBot {
 		private static CancellationToken _cancelPlayToken;
 
 		[Command("join", RunMode = RunMode.Async), Alias("summon", "invite")]
-		public async Task Join()  =>_vClient = await (Context.User as IVoiceState).VoiceChannel.ConnectAsync();
+		public async Task Join()  => _vClient = await (Context.User as IVoiceState).VoiceChannel.ConnectAsync();
 
 		[Command("leave", RunMode = RunMode.Async), Alias("dismiss")]
 		public async Task Leave() => await _vClient.StopAsync();
@@ -40,11 +41,6 @@ namespace DiscordBot {
 
 		[Command("next", RunMode = RunMode.Async)]
 		public async Task Next() => await Play();
-
-		[Command("request", RunMode = RunMode.Async)]
-		public async Task Request([Remainder]string query = null) {
-			await SendAudioAsync(GetMusic(query).FirstOrDefault());
-		}
 
 		[Command("youtube", RunMode = RunMode.Async)]
 		public async Task Youtube([Remainder]string url) {
@@ -84,19 +80,15 @@ namespace DiscordBot {
 			}
 		}
 
-		public List<string> GetMusic(string query = null) {
-			if(query != null) {
-				return Directory.GetFiles(@"G:\Music\flat", $"*{query}*.mp3", SearchOption.AllDirectories).OrderBy(a => Guid.NewGuid()).ToList();
-			} else {
-				return Directory.GetFiles(@"G:\Music\flat", "*.mp3", SearchOption.AllDirectories).OrderBy(a => Guid.NewGuid()).ToList();
+		public async Task SendAudioAsync(YoutubeResult result) {
+			if (result.Meta != null) {
+				await ReplyAsync(":musical_note: " + result.Meta.FullName);
+				await Stop();
 			}
+			await SendAudioAsync(result.Path);
 		}
 
 		public async Task SendAudioAsync(string path) {
-			if(path != null) {
-				await ReplyAsync(":musical_note: " + path.Replace(@"G:\Music\flat\", ""));
-				Stop();
-			}
 			_cancelPlayTokenSource = new CancellationTokenSource();
 			_cancelPlayToken = _cancelPlayTokenSource.Token;
 			// Your task: Get a full path to the file if the value of 'path' is only a filename.

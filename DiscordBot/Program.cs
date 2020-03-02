@@ -32,7 +32,7 @@ namespace DiscordBot {
 
 			_client.Log += Logger.Log;
 
-			string token = "Mzg4MDQ4NDEwOTMyMTUwMjcy.DQnW1A.wgotkEO4MLvVwU1BljR4upBnupw"; // Remember to keep this private!
+			string token = "Mzg4MDQ4NDEwOTMyMTUwMjcy.XlwuNg.-aMRRU5Dier0tu32xYxUUveOlqM"; // Remember to keep this private!
 			await _client.LoginAsync(TokenType.Bot, token);
 			await _client.StartAsync();
 			await _client.SetGameAsync("Playing Fox", "https://discordapp.com/oauth2/authorize?&client_id=388048410932150272&scope=bot&permissions=1878523073");
